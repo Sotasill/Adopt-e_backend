@@ -1,5 +1,5 @@
 import { model, Schema } from 'mongoose';
-import { emailRegexp, nameRegexp, phoneRegexp } from '../constants/users.js';
+import { emailRegexp, nameRegexp } from '../constants/users.js';
 import uniqueUserIdMiddleware from '../middleware/uniqueUserId.js';
 
 // Функция для генерации уникального ID пользователя
@@ -30,10 +30,44 @@ const usersSchema = new Schema(
       type: String,
       required: true,
     },
-    phone: {
+    role: {
       type: String,
+      enum: ['user', 'breeder'],
       required: true,
-      match: phoneRegexp,
+    },
+    // Поля для заводчика
+    companyName: {
+      type: String,
+      required: function () {
+        return this.role === 'breeder';
+      },
+    },
+    address: {
+      type: String,
+      required: function () {
+        return this.role === 'breeder';
+      },
+    },
+    country: {
+      type: String,
+      required: function () {
+        return this.role === 'breeder';
+      },
+    },
+    specialization: {
+      type: String,
+      enum: ['dog', 'cat'],
+      required: function () {
+        return this.role === 'breeder';
+      },
+    },
+    isOnline: {
+      type: Boolean,
+      default: false,
+    },
+    lastActive: {
+      type: Date,
+      default: Date.now,
     },
     token: {
       type: String,
