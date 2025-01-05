@@ -6,8 +6,13 @@ import {
 } from '../services/auth.js';
 import ctrlWrapper from '../utils/ctrlWrapper.js';
 
-const register = async (req, res) => {
-  const userData = await registerUser(req.body);
+const registerBreeder = async (req, res) => {
+  const userData = await registerUser({ ...req.body, role: 'breeder' });
+  res.status(201).json({ user: userData });
+};
+
+const registerRegularUser = async (req, res) => {
+  const userData = await registerUser({ ...req.body, role: 'user' });
   res.status(201).json({ user: userData });
 };
 
@@ -28,7 +33,8 @@ const logout = async (req, res) => {
 };
 
 export default {
-  register: ctrlWrapper(register),
+  registerBreeder: ctrlWrapper(registerBreeder),
+  registerRegularUser: ctrlWrapper(registerRegularUser),
   login: ctrlWrapper(login),
   refresh: ctrlWrapper(refresh),
   logout: ctrlWrapper(logout),
