@@ -34,6 +34,7 @@ const usersSchema = new Schema(
       type: String,
       enum: ['user', 'breeder'],
       required: true,
+      default: 'user',
     },
     // Поля для заводчика
     companyName: {
