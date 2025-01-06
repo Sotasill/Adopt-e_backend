@@ -46,6 +46,7 @@ const addAnimal = async (req, res) => {
   const animalData = {
     ...req.body,
     ...parentData,
+    userId: req.user._id,
     breeder: role === 'breeder' ? breederId : null,
     image: imageData.url ? imageData : undefined,
     isRegisteredInSystem: true,
@@ -173,10 +174,82 @@ const deleteAnimal = async (req, res) => {
   });
 };
 
+const checkAnimalName = async (req, res) => {
+  const { _id: userId, role } = req.user;
+  const { name } = req.body;
+
+  if (!name) {
+    throw new HttpError(400, 'Name is required');
+  }
+
+  let query = { name };
+
+  // Для заводчика проверяем по его ID
+  if (role === 'breeder') {
+    query.breeder = userId;
+  } else {
+    // Для обычного пользователя проверяем по полю breeder: null
+    query.breeder = null;
+  }
+
+  const existingAnimal = await Animal.findOne(query);
+
+  res.json({
+    status: 'success',
+    code: 200,
+    data: {
+      exists: !!existingAnimal,
+    },
+  });
+};
+
+const getUserAnimals = async (req, res) => {
+  const { _id: userId, role } = req.user;
+
+  // Для заводчика ищем по breeder, для обычного пользователя по userId
+  let query =
+    role === 'breeder'
+      ? { breeder: userId }
+      : { userId: userId, breeder: null };
+
+  const animals = await Animal.find(query);
+
+  // Преобразуем данные в нужный формат
+  const formattedAnimals = animals.map(animal => {
+    const birthDate = new Date(animal.birthDate);
+    const today = new Date();
+    const age = Math.floor(
+      (today - birthDate) / (1000 * 60 * 60 * 24 * 365.25)
+    ); // возраст в годах
+
+    return {
+      id: animal._id,
+      name: animal.name,
+      species: animal.type === 'cat' ? 'Кошка' : 'Собака',
+      breed: animal.breed,
+      age: age,
+      sex: animal.sex === 'male' ? 'Самец' : 'Самка',
+      status: animal.isRegisteredInSystem ? 'Зарегистрирован' : 'В процессе',
+      image: animal.image?.url,
+    };
+  });
+
+  res.json({
+    status: 'success',
+    code: 200,
+    data: {
+      animals: formattedAnimals,
+      total: formattedAnimals.length,
+    },
+  });
+};
+
 export {
   addAnimal,
   getBreederAnimals,
   getAnimalById,
   updateAnimal,
   deleteAnimal,
+  checkAnimalName,
+  getUserAnimals,
 };

@@ -25,6 +25,10 @@ const animalAddSchema = Joi.object({
   fatherRegistered: Joi.boolean().default(false),
   name: Joi.string().required(),
   breed: Joi.string().required(),
+  sex: Joi.string().valid('male', 'female').required().messages({
+    'any.required': 'Пол животного обязателен',
+    'any.only': 'Пол животного должен быть male или female',
+  }),
   birthDate: Joi.date().required(),
   type: Joi.string().valid('cat', 'dog'),
   litterRegistrationNumber: Joi.string(),
@@ -37,6 +41,7 @@ const animalAddSchema = Joi.object({
 const animalUpdateSchema = Joi.object({
   name: Joi.string(),
   breed: Joi.string(),
+  sex: Joi.string().valid('male', 'female'),
   birthDate: Joi.date(),
   mother: Joi.string().custom(isValidObjectId),
   father: Joi.string().custom(isValidObjectId),
@@ -48,4 +53,11 @@ const animalUpdateSchema = Joi.object({
   furLength: Joi.string(),
 });
 
-export { animalAddSchema, animalUpdateSchema };
+const checkAnimalNameSchema = Joi.object({
+  name: Joi.string().required().messages({
+    'any.required': 'Имя животного обязательно',
+    'string.empty': 'Имя животного не может быть пустым',
+  }),
+});
+
+export { animalAddSchema, animalUpdateSchema, checkAnimalNameSchema };

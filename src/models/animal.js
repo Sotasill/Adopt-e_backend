@@ -26,6 +26,11 @@ const animalSchema = new Schema(
       unique: true,
       default: generateUniqueIdentifier,
     },
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
     mother: {
       type: Schema.Types.ObjectId,
       ref: 'Animal',
@@ -63,6 +68,11 @@ const animalSchema = new Schema(
     },
     breed: {
       type: String,
+      required: true,
+    },
+    sex: {
+      type: String,
+      enum: ['male', 'female'],
       required: true,
     },
     microchip: {

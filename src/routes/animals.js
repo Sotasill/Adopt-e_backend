@@ -7,7 +7,11 @@ import { dirname } from 'path';
 import { authenticate } from '../middleware/authenticate.js';
 import { validateBody } from '../middleware/validateBody.js';
 import { isValidId } from '../middleware/isValidId.js';
-import { animalAddSchema, animalUpdateSchema } from '../schemas/animal.js';
+import {
+  animalAddSchema,
+  animalUpdateSchema,
+  checkAnimalNameSchema,
+} from '../schemas/animal.js';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import {
   addAnimal,
@@ -15,6 +19,8 @@ import {
   getAnimalById,
   updateAnimal,
   deleteAnimal,
+  checkAnimalName,
+  getUserAnimals,
 } from '../controllers/animals.js';
 
 const router = express.Router();
@@ -30,6 +36,8 @@ const upload = multer({
 });
 
 router.use(authenticate);
+
+router.get('/user', ctrlWrapper(getUserAnimals));
 
 router.post(
   '/',
@@ -55,6 +63,12 @@ router.delete(
     next();
   },
   ctrlWrapper(deleteAnimal)
+);
+router.post(
+  '/check-name',
+  authenticate,
+  validateBody(checkAnimalNameSchema),
+  ctrlWrapper(checkAnimalName)
 );
 
 export { router as animalsRouter };
