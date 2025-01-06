@@ -21,4 +21,4 @@ router.get('/profile', auth, (req, res) => {
   });
 });
 
-export default router;
+export { router as protectedRouter };

@@ -1,5 +1,11 @@
 import express from 'express';
 
-const jsonMiddleware = express.json();
+const jsonMiddleware = (req, res, next) => {
+  if (req.method === 'DELETE') {
+    return next();
+  }
 
-export default jsonMiddleware;
+  express.json()(req, res, next);
+};
+
+export { jsonMiddleware };

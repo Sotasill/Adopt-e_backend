@@ -1,6 +1,6 @@
 import express from 'express';
 import 'dotenv/config';
-import router from './routes/index.js';
+import { mainRouter as router } from './routes/index.js';
 import initMongoDB from './models/initMongoDB.js';
 import {
   corsMiddleware,

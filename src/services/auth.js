@@ -7,7 +7,17 @@ import getEnvVars from '../utils/getEnvVars.js';
 const JWT_ACCESS_SECRET = getEnvVars('JWT_ACCESS_SECRET');
 const JWT_REFRESH_SECRET = getEnvVars('JWT_REFRESH_SECRET');
 
-const registerUser = async ({ username, email, password, phone }) => {
+const registerUser = async ({
+  username,
+  email,
+  password,
+  phone,
+  role,
+  specialization,
+  companyName,
+  address,
+  country,
+}) => {
   const existingUser = await User.findOne({
     $or: [{ email }, { username }],
   });
@@ -27,6 +37,11 @@ const registerUser = async ({ username, email, password, phone }) => {
     email,
     password: hashedPassword,
     phone,
+    role,
+    specialization,
+    companyName,
+    address,
+    country,
   });
 
   const userData = newUser.toObject();

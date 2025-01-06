@@ -26,4 +26,4 @@ const uniqueUserIdMiddleware = async function (next) {
   next();
 };
 
-export default uniqueUserIdMiddleware;
+export { uniqueUserIdMiddleware };

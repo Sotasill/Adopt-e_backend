@@ -8,4 +8,4 @@ const ctrlWrapper = ctrl => {
   };
 };
 
-export default ctrlWrapper;
+export { ctrlWrapper };

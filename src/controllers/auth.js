@@ -4,7 +4,7 @@ import {
   refreshSession,
   logoutUser,
 } from '../services/auth.js';
-import ctrlWrapper from '../utils/ctrlWrapper.js';
+import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 
 const registerBreeder = async (req, res) => {
   const userData = await registerUser({ ...req.body, role: 'breeder' });
@@ -32,7 +32,7 @@ const logout = async (req, res) => {
   res.status(204).send();
 };
 
-export default {
+export const auth = {
   registerBreeder: ctrlWrapper(registerBreeder),
   registerRegularUser: ctrlWrapper(registerRegularUser),
   login: ctrlWrapper(login),

@@ -1,6 +1,6 @@
 import { model, Schema } from 'mongoose';
 import { emailRegexp, nameRegexp } from '../constants/users.js';
-import uniqueUserIdMiddleware from '../middleware/uniqueUserId.js';
+import { uniqueUserIdMiddleware } from '../middleware/uniqueUserId.js';
 
 // Функция для генерации уникального ID пользователя
 const generateUserId = () => {
@@ -49,15 +49,15 @@ const usersSchema = new Schema(
         return this.role === 'breeder';
       },
     },
-    country: {
+    specialization: {
       type: String,
+      enum: ['cat', 'dog'],
       required: function () {
         return this.role === 'breeder';
       },
     },
-    specialization: {
+    country: {
       type: String,
-      enum: ['dog', 'cat'],
       required: function () {
         return this.role === 'breeder';
       },

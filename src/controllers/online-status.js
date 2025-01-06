@@ -1,5 +1,5 @@
 import { updateUserStatus, getUserStatus } from '../services/online-status.js';
-import ctrlWrapper from '../utils/ctrlWrapper.js';
+import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 
 const updateStatus = async (req, res) => {
   const { isOnline } = req.body;
@@ -16,7 +16,7 @@ const getStatus = async (req, res) => {
   res.json(status);
 };
 
-export default {
+export const onlineStatus = {
   updateStatus: ctrlWrapper(updateStatus),
   getStatus: ctrlWrapper(getStatus),
 };

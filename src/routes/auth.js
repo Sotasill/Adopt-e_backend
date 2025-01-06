@@ -1,12 +1,12 @@
 import express from 'express';
-import authController from '../controllers/auth.js';
+import { auth as authController } from '../controllers/auth.js';
 import { validateBody } from '../middleware/index.js';
 import {
   registerBreederSchema,
   registerUserSchema,
   loginSchema,
 } from '../schemas/auth.js';
-import authenticate from '../middleware/authenticate.js';
+import { authenticate } from '../middleware/authenticate.js';
 
 const router = express.Router();
 
@@ -24,4 +24,4 @@ router.post('/login', validateBody(loginSchema), authController.login);
 router.post('/refresh', authController.refresh);
 router.post('/logout', authenticate, authController.logout);
 
-export default router;
+export { router as authRouter };
