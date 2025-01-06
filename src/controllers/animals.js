@@ -48,14 +48,10 @@ const addAnimal = async (req, res) => {
     ...parentData,
     userId: req.user._id,
     breeder: role === 'breeder' ? breederId : null,
+    type: role === 'breeder' ? specialization : req.body.type,
     image: imageData.url ? imageData : undefined,
     isRegisteredInSystem: true,
   };
-
-  // Если пользователь не заводчик, используем тип из запроса
-  if (role !== 'breeder') {
-    animalData.type = req.body.type;
-  }
 
   // Проверяем статус регистрации родителей
   if (!animalData.motherRegistered) {
@@ -205,32 +201,98 @@ const checkAnimalName = async (req, res) => {
 
 const getUserAnimals = async (req, res) => {
   const { _id: userId, role } = req.user;
+  const {
+    page = 1,
+    limit = 10,
+    sortBy = 'registrationDate',
+    sortOrder = 'desc',
+    type,
+    sex,
+    breed,
+    ageMin,
+    ageMax,
+    search,
+  } = req.query;
 
-  // Для заводчика ищем по breeder, для обычного пользователя по userId
-  let query =
-    role === 'breeder'
-      ? { breeder: userId }
-      : { userId: userId, breeder: null };
+  // Базовый запрос в зависимости от роли
+  let query = role === 'breeder' ? { breeder: userId } : { userId: userId };
 
-  const animals = await Animal.find(query);
+  // Добавляем фильтры
+  if (type) {
+    query.type = type;
+  }
+  if (sex) {
+    query.sex = sex;
+  }
+  if (breed) {
+    query.breed = { $regex: breed, $options: 'i' };
+  }
+  if (search) {
+    query.name = { $regex: search, $options: 'i' };
+  }
+
+  // Фильтр по возрасту
+  if (ageMin || ageMax) {
+    const today = new Date();
+    if (ageMin) {
+      const maxBirthDate = new Date(
+        today.setFullYear(today.getFullYear() - ageMin)
+      );
+      query.birthDate = { ...query.birthDate, $lte: maxBirthDate };
+    }
+    if (ageMax) {
+      const minBirthDate = new Date(
+        today.setFullYear(today.getFullYear() - ageMax)
+      );
+      query.birthDate = { ...query.birthDate, $gte: minBirthDate };
+    }
+  }
+
+  // Получаем общее количество документов для пагинации
+  const total = await Animal.countDocuments(query);
+
+  // Проверяем допустимые поля для сортировки
+  const allowedSortFields = ['name', 'birthDate', 'registrationDate'];
+  const validSortBy = allowedSortFields.includes(sortBy)
+    ? sortBy
+    : 'registrationDate';
+  const validSortOrder = ['asc', 'desc'].includes(sortOrder)
+    ? sortOrder
+    : 'desc';
+
+  // Настраиваем сортировку
+  const sortOptions = {};
+  sortOptions[validSortBy] = validSortOrder === 'desc' ? -1 : 1;
+
+  // Получаем животных с пагинацией и сортировкой
+  const animals = await Animal.find(query)
+    .sort(sortOptions)
+    .skip((page - 1) * limit)
+    .limit(Number(limit));
 
   // Преобразуем данные в нужный формат
   const formattedAnimals = animals.map(animal => {
     const birthDate = new Date(animal.birthDate);
     const today = new Date();
-    const age = Math.floor(
-      (today - birthDate) / (1000 * 60 * 60 * 24 * 365.25)
-    ); // возраст в годах
+    const diffTime = Math.abs(today - birthDate);
+    const age = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 365.25));
 
     return {
       id: animal._id,
+      uniqueIdentifier: animal.uniqueIdentifier,
       name: animal.name,
       species: animal.type === 'cat' ? 'Кошка' : 'Собака',
       breed: animal.breed,
       age: age,
       sex: animal.sex === 'male' ? 'Самец' : 'Самка',
-      status: animal.isRegisteredInSystem ? 'Зарегистрирован' : 'В процессе',
-      image: animal.image?.url,
+      status: animal.isPaid ? 'Зарегистрирован' : 'В процессе',
+      image:
+        animal.image?.url ||
+        (animal.type === 'cat'
+          ? '/images/default-cat.jpg'
+          : '/images/default-dog.jpg'),
+      birthDate: animal.birthDate,
+      registrationDate: animal.registrationDate,
     };
   });
 
@@ -239,7 +301,17 @@ const getUserAnimals = async (req, res) => {
     code: 200,
     data: {
       animals: formattedAnimals,
-      total: formattedAnimals.length,
+      pagination: {
+        total,
+        page: Number(page),
+        totalPages: Math.ceil(total / limit),
+        limit: Number(limit),
+      },
+      sorting: {
+        sortBy: validSortBy,
+        sortOrder: validSortOrder,
+        availableSortFields: allowedSortFields,
+      },
     },
   });
 };

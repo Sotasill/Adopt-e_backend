@@ -52,7 +52,7 @@ const animalSchema = new Schema(
     breeder: {
       type: Schema.Types.ObjectId,
       ref: 'User',
-      required: true,
+      required: false,
     },
     litterRegistrationNumber: {
       type: String,
