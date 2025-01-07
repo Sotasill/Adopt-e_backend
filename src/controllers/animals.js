@@ -293,6 +293,7 @@ const getUserAnimals = async (req, res) => {
           : '/images/default-dog.jpg'),
       birthDate: animal.birthDate,
       registrationDate: animal.registrationDate,
+      notes: animal.notes || '',
     };
   });
 

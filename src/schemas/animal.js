@@ -36,6 +36,7 @@ const animalAddSchema = Joi.object({
   furColor: Joi.string(),
   eyeColor: Joi.string().required(),
   furLength: Joi.string(),
+  notes: Joi.string().allow('', null),
 });
 
 const animalUpdateSchema = Joi.object({
@@ -51,6 +52,7 @@ const animalUpdateSchema = Joi.object({
   furColor: Joi.string(),
   eyeColor: Joi.string(),
   furLength: Joi.string(),
+  notes: Joi.string().allow('', null),
 });
 
 const checkAnimalNameSchema = Joi.object({

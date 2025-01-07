@@ -127,6 +127,11 @@ const animalSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    notes: {
+      type: String,
+      required: false,
+      default: '',
+    },
   },
   { versionKey: false, timestamps: true }
 );
