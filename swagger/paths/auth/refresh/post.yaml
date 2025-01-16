@@ -1,0 +1,36 @@
+tags:
+  - Аутентификация
+summary: Обновить токен доступа
+description: Получение нового access token с помощью refresh token
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - refreshToken
+        properties:
+          refreshToken:
+            type: string
+            example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+responses:
+  '200':
+    description: Токены успешно обновлены
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            accessToken:
+              type: string
+              example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+            refreshToken:
+              type: string
+              example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+  '401':
+    description: Недействительный refresh token
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/AuthenticationError'

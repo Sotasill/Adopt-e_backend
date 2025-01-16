@@ -1,0 +1,19 @@
+tags:
+  - Аутентификация
+summary: Выход из системы
+description: Завершение сессии пользователя и инвалидация refresh token
+security:
+  - bearerAuth: []
+responses:
+  '200':
+    description: Успешный выход из системы
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: 'Успешный выход из системы'
+  '401':
+    $ref: '#/components/responses/401'

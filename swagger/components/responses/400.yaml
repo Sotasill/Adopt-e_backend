@@ -1,0 +1,12 @@
+description: Ошибка валидации
+content:
+  application/json:
+    schema:
+      $ref: '#/components/schemas/ValidationError'
+    example:
+      code: 400
+      message: 'Ошибка валидации'
+      details:
+        fields:
+          email: 'Неверный формат email'
+          password: 'Пароль должен быть не менее 6 символов'

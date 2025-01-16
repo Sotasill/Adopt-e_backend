@@ -1,0 +1,17 @@
+tags:
+  - Животные
+summary: Получить список животных заводчика
+description: Получение списка всех животных, принадлежащих заводчику
+security:
+  - bearerAuth: []
+responses:
+  '200':
+    description: Список животных
+    content:
+      application/json:
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/Animal'
+  '401':
+    $ref: '#/components/responses/401'

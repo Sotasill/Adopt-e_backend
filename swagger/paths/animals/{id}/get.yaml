@@ -1,0 +1,29 @@
+tags:
+  - Животные
+summary: Получить информацию о животном
+description: Получение детальной информации о конкретном животном по его ID
+parameters:
+  - name: id
+    in: path
+    required: true
+    description: ID животного
+    schema:
+      type: string
+      format: uuid
+security:
+  - bearerAuth: []
+responses:
+  '200':
+    description: Информация о животном
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/Animal'
+  '401':
+    $ref: '#/components/responses/401'
+  '404':
+    description: Животное не найдено
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/NotFoundError'

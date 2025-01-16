@@ -1,0 +1,18 @@
+type: object
+required:
+  - code
+  - message
+properties:
+  code:
+    type: integer
+    description: HTTP код ошибки
+    example: 400
+  message:
+    type: string
+    description: Сообщение об ошибке
+    example: 'Произошла ошибка'
+  details:
+    type: object
+    description: Дополнительные детали ошибки
+    example:
+      reason: 'Дополнительная информация об ошибке'

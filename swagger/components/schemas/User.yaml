@@ -1,0 +1,49 @@
+type: object
+required:
+  - id
+  - email
+  - firstName
+  - lastName
+  - role
+properties:
+  id:
+    type: string
+    format: uuid
+    description: Уникальный идентификатор пользователя
+    example: '123e4567-e89b-12d3-a456-426614174000'
+  email:
+    type: string
+    format: email
+    description: Email пользователя
+    example: 'user@example.com'
+  firstName:
+    type: string
+    description: Имя пользователя
+    example: 'Иван'
+  lastName:
+    type: string
+    description: Фамилия пользователя
+    example: 'Петров'
+  role:
+    type: string
+    enum: [user, breeder]
+    description: Роль пользователя (обычный пользователь или заводчик)
+    example: 'user'
+  phone:
+    type: string
+    description: Номер телефона (обязателен для заводчиков)
+    example: '+7 (999) 123-45-67'
+  isEmailVerified:
+    type: boolean
+    description: Подтвержден ли email пользователя
+    example: true
+  createdAt:
+    type: string
+    format: date-time
+    description: Дата и время создания аккаунта
+    example: '2024-01-16T12:00:00Z'
+  updatedAt:
+    type: string
+    format: date-time
+    description: Дата и время последнего обновления
+    example: '2024-01-16T12:00:00Z'

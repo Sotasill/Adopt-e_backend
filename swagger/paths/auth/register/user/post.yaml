@@ -1,0 +1,42 @@
+tags:
+  - Аутентификация
+summary: Регистрация пользователя
+description: Регистрация нового пользователя с ролью user
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - email
+          - password
+          - firstName
+          - lastName
+        properties:
+          email:
+            type: string
+            format: email
+            example: 'user@example.com'
+          password:
+            type: string
+            format: password
+            minLength: 6
+            example: 'password123'
+          firstName:
+            type: string
+            example: 'Иван'
+          lastName:
+            type: string
+            example: 'Иванов'
+responses:
+  '201':
+    description: Пользователь успешно зарегистрирован
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/User'
+  '400':
+    $ref: '#/components/responses/400'
+  '409':
+    $ref: '#/components/responses/409'

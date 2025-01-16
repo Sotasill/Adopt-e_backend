@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf8" />
+    <title>Adopt-e API Documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      body {
+        padding: 0;
+        margin: 0;
+      }
+
+      /* Кастомные стили для Adopt-e */
+      :root {
+        --primary-color: #4caf50;
+        --secondary-color: #ffa726;
+        --text-color: #333333;
+        --background-color: #ffffff;
+      }
+
+      .redoc-wrap {
+        background-color: var(--background-color);
+      }
+
+      h1,
+      h2,
+      h3 {
+        color: var(--primary-color);
+      }
+
+      .api-info {
+        margin: 20px 0;
+      }
+
+      .api-info__title {
+        color: var(--primary-color);
+        font-size: 2.5em;
+        font-weight: bold;
+      }
+
+      .api-info__description {
+        color: var(--text-color);
+      }
+    </style>
+    <script src="https://cdn.redocly.com/redoc/latest/bundles/redoc.standalone.js"></script>
+  </head>
+  <body>
+    <div id="redoc"></div>
+    <script>
+      Redoc.init(
+        'swagger.json',
+        {
+          theme: {
+            colors: {
+              primary: {
+                main: '#4CAF50',
+              },
+              success: {
+                main: '#4CAF50',
+              },
+              warning: {
+                main: '#FFA726',
+              },
+              error: {
+                main: '#FF5722',
+              },
+              text: {
+                primary: '#333333',
+              },
+            },
+            typography: {
+              fontSize: '16px',
+              fontFamily: 'Roboto, sans-serif',
+              headings: {
+                fontFamily: 'Roboto, sans-serif',
+                fontWeight: '600',
+              },
+            },
+            sidebar: {
+              backgroundColor: '#FFFFFF',
+              textColor: '#333333',
+            },
+          },
+        },
+        document.getElementById('redoc')
+      );
+    </script>
+  </body>
+</html>

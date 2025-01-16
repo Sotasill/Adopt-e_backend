@@ -1,0 +1,50 @@
+tags:
+  - Аутентификация
+summary: Регистрация заводчика
+description: Регистрация нового пользователя с ролью заводчика
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - email
+          - password
+          - firstName
+          - lastName
+          - phone
+        properties:
+          email:
+            type: string
+            format: email
+            example: 'breeder@example.com'
+          password:
+            type: string
+            format: password
+            minLength: 6
+            example: 'password123'
+          firstName:
+            type: string
+            example: 'Иван'
+          lastName:
+            type: string
+            example: 'Петров'
+          phone:
+            type: string
+            example: '+7 (999) 123-45-67'
+responses:
+  '201':
+    description: Заводчик успешно зарегистрирован
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/User'
+  '400':
+    $ref: '#/components/responses/400'
+  '409':
+    description: Пользователь с таким email уже существует
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/ConflictError'

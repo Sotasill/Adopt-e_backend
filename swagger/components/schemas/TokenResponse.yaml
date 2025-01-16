@@ -1,0 +1,17 @@
+type: object
+required:
+  - accessToken
+  - refreshToken
+properties:
+  accessToken:
+    type: string
+    description: JWT токен для доступа к API
+    example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+  refreshToken:
+    type: string
+    description: Токен для обновления access token
+    example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+  expiresIn:
+    type: integer
+    description: Время жизни access token в секундах
+    example: 3600

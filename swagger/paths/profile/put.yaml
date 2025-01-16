@@ -1,0 +1,33 @@
+tags:
+  - Профиль
+summary: Обновить профиль пользователя
+description: Обновление информации о текущем авторизованном пользователе
+security:
+  - bearerAuth: []
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          firstName:
+            type: string
+            example: 'Иван'
+          lastName:
+            type: string
+            example: 'Петров'
+          phone:
+            type: string
+            example: '+7 (999) 123-45-67'
+responses:
+  '200':
+    description: Профиль успешно обновлен
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/User'
+  '400':
+    $ref: '#/components/responses/400'
+  '401':
+    $ref: '#/components/responses/401'

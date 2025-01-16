@@ -1,0 +1,10 @@
+description: Конфликт данных
+content:
+  application/json:
+    schema:
+      $ref: '#/components/schemas/ConflictError'
+    example:
+      code: 409
+      message: 'Конфликт данных'
+      details:
+        reason: 'Пользователь с таким email уже существует'

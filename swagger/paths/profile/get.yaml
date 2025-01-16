@@ -1,0 +1,15 @@
+tags:
+  - Профиль
+summary: Получить профиль пользователя
+description: Получение информации о текущем авторизованном пользователе
+security:
+  - bearerAuth: []
+responses:
+  '200':
+    description: Информация о профиле
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/User'
+  '401':
+    $ref: '#/components/responses/401'

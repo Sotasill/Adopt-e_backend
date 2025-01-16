@@ -1,0 +1,11 @@
+description: Ресурс не найден
+content:
+  application/json:
+    schema:
+      $ref: '#/components/schemas/NotFoundError'
+    example:
+      code: 404
+      message: 'Ресурс не найден'
+      details:
+        resource: 'Animal'
+        id: '123e4567-e89b-12d3-a456-426614174000'

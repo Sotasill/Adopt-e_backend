@@ -1,0 +1,60 @@
+tags:
+  - Животные
+summary: Добавить новое животное
+description: Создание новой карточки животного заводчиком
+security:
+  - bearerAuth: []
+requestBody:
+  required: true
+  content:
+    multipart/form-data:
+      schema:
+        type: object
+        required:
+          - name
+          - type
+          - breed
+          - age
+          - price
+        properties:
+          name:
+            type: string
+            description: Имя животного
+            example: 'Барсик'
+          type:
+            type: string
+            description: Тип животного
+            example: 'кошка'
+          breed:
+            type: string
+            description: Порода животного
+            example: 'Сиамская'
+          age:
+            type: number
+            description: Возраст животного
+            example: 2
+          price:
+            type: number
+            description: Цена животного
+            example: 15000
+          description:
+            type: string
+            description: Описание животного
+            example: 'Ласковый и игривый котенок'
+          image:
+            type: string
+            format: binary
+            description: Фотография животного
+responses:
+  '201':
+    description: Животное успешно добавлено
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/Animal'
+  '400':
+    $ref: '#/components/responses/400'
+  '401':
+    $ref: '#/components/responses/401'
+  '403':
+    $ref: '#/components/responses/403'

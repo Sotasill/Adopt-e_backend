@@ -1,0 +1,58 @@
+tags:
+  - Животные
+summary: Обновить информацию о животном
+description: Обновление информации о существующем животном
+parameters:
+  - name: id
+    in: path
+    required: true
+    description: ID животного
+    schema:
+      type: string
+      format: uuid
+security:
+  - bearerAuth: []
+requestBody:
+  required: true
+  content:
+    multipart/form-data:
+      schema:
+        type: object
+        properties:
+          name:
+            type: string
+            description: Имя животного
+          type:
+            type: string
+            description: Тип животного
+          breed:
+            type: string
+            description: Порода животного
+          age:
+            type: number
+            description: Возраст животного
+          price:
+            type: number
+            description: Цена животного
+          description:
+            type: string
+            description: Описание животного
+          image:
+            type: string
+            format: binary
+            description: Новая фотография животного
+responses:
+  '200':
+    description: Информация о животном обновлена
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/Animal'
+  '400':
+    $ref: '#/components/responses/400'
+  '401':
+    $ref: '#/components/responses/401'
+  '403':
+    $ref: '#/components/responses/403'
+  '404':
+    $ref: '#/components/responses/404'

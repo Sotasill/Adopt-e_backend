@@ -1,0 +1,10 @@
+description: Ошибка аутентификации
+content:
+  application/json:
+    schema:
+      $ref: '#/components/schemas/AuthenticationError'
+    example:
+      code: 401
+      message: 'Ошибка аутентификации'
+      details:
+        reason: 'Неверные учетные данные'

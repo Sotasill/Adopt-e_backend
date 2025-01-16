@@ -1,0 +1,10 @@
+description: Доступ запрещен
+content:
+  application/json:
+    schema:
+      $ref: '#/components/schemas/AuthorizationError'
+    example:
+      code: 403
+      message: 'Доступ запрещен'
+      details:
+        reason: 'Недостаточно прав для выполнения операции'

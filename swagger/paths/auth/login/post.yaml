@@ -1,0 +1,40 @@
+tags:
+  - Аутентификация
+summary: Вход в систему
+description: Аутентификация пользователя по email и паролю
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - email
+          - password
+        properties:
+          email:
+            type: string
+            format: email
+            example: 'user@example.com'
+          password:
+            type: string
+            format: password
+            example: 'password123'
+responses:
+  '200':
+    description: Успешный вход
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            accessToken:
+              type: string
+              example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+            refreshToken:
+              type: string
+              example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+  '400':
+    $ref: '#/components/responses/400'
+  '401':
+    $ref: '#/components/responses/401'

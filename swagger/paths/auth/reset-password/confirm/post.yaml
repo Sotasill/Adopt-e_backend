@@ -1,0 +1,42 @@
+tags:
+  - Аутентификация
+summary: Подтвердить сброс пароля
+description: Установка нового пароля с использованием токена сброса
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - token
+          - newPassword
+        properties:
+          token:
+            type: string
+            description: Токен из email для сброса пароля
+            example: 'reset-token-123'
+          newPassword:
+            type: string
+            format: password
+            minLength: 6
+            example: 'newPassword123'
+responses:
+  '200':
+    description: Пароль успешно изменен
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: 'Пароль успешно изменен'
+  '400':
+    $ref: '#/components/responses/400'
+  '401':
+    description: Недействительный или истекший токен
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/AuthenticationError'

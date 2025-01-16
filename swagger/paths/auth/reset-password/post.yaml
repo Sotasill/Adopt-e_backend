@@ -1,0 +1,36 @@
+tags:
+  - Аутентификация
+summary: Запросить сброс пароля
+description: Отправка запроса на сброс пароля (отправляет email с токеном)
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - email
+        properties:
+          email:
+            type: string
+            format: email
+            example: 'user@example.com'
+responses:
+  '200':
+    description: Письмо для сброса пароля отправлено
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: 'Инструкции по сбросу пароля отправлены на email'
+  '400':
+    $ref: '#/components/responses/400'
+  '404':
+    description: Пользователь с указанным email не найден
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/NotFoundError'

@@ -1,0 +1,64 @@
+type: object
+required:
+  - id
+  - name
+  - type
+  - breed
+  - age
+  - price
+  - breederId
+properties:
+  id:
+    type: string
+    format: uuid
+    description: Уникальный идентификатор животного
+    example: '123e4567-e89b-12d3-a456-426614174000'
+  name:
+    type: string
+    description: Имя животного
+    example: 'Барсик'
+  type:
+    type: string
+    description: Тип животного
+    example: 'кошка'
+  breed:
+    type: string
+    description: Порода животного
+    example: 'Сиамская'
+  age:
+    type: number
+    description: Возраст животного в годах
+    example: 2
+  price:
+    type: number
+    description: Цена животного
+    example: 15000
+  description:
+    type: string
+    description: Описание животного
+    example: 'Ласковый и игривый котенок'
+  imageUrl:
+    type: string
+    format: uri
+    description: URL фотографии животного
+    example: 'https://example.com/images/cat.jpg'
+  breederId:
+    type: string
+    format: uuid
+    description: ID заводчика, которому принадлежит животное
+    example: '123e4567-e89b-12d3-a456-426614174000'
+  status:
+    type: string
+    enum: [available, reserved, sold]
+    description: Статус животного
+    example: 'available'
+  createdAt:
+    type: string
+    format: date-time
+    description: Дата и время создания карточки
+    example: '2024-01-16T12:00:00Z'
+  updatedAt:
+    type: string
+    format: date-time
+    description: Дата и время последнего обновления
+    example: '2024-01-16T12:00:00Z'

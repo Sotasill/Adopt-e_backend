@@ -1,0 +1,420 @@
+openapi: 3.0.0
+info:
+  title: Adopt-e API
+  description: API для платформы по усыновлению домашних животных Adopt-e
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:3000/api
+    description: Локальный сервер разработки
+  - url: https://adopt-e.com/api
+    description: Продакшн сервер
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        firstName:
+          type: string
+        lastName:
+          type: string
+        role:
+          type: string
+          enum: [user, breeder]
+        phone:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Animal:
+      type: object
+      required:
+        - name
+        - type
+        - breed
+        - age
+        - price
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          description: Имя животного
+        type:
+          type: string
+          description: Тип животного (например, кошка, собака)
+        breed:
+          type: string
+          description: Порода животного
+        age:
+          type: number
+          description: Возраст животного
+        price:
+          type: number
+          description: Цена животного
+        description:
+          type: string
+          description: Описание животного
+        imageUrl:
+          type: string
+          description: URL фотографии животного
+        breederId:
+          type: string
+          format: uuid
+          description: ID заводчика
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: HTTP код ошибки
+        message:
+          type: string
+          description: Сообщение об ошибке
+        details:
+          type: object
+          description: Дополнительные детали ошибки
+
+    ValidationError:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 400
+        message:
+          type: string
+          example: 'Ошибка валидации'
+        details:
+          type: object
+          properties:
+            fields:
+              type: object
+              additionalProperties:
+                type: string
+          example:
+            fields:
+              email: 'Неверный формат email'
+              password: 'Пароль должен быть не менее 6 символов'
+
+    AuthenticationError:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 401
+        message:
+          type: string
+          example: 'Ошибка аутентификации'
+        details:
+          type: object
+          example:
+            reason: 'Неверные учетные данные'
+
+    AuthorizationError:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 403
+        message:
+          type: string
+          example: 'Доступ запрещен'
+        details:
+          type: object
+          example:
+            reason: 'Недостаточно прав для выполнения операции'
+
+    NotFoundError:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 404
+        message:
+          type: string
+          example: 'Ресурс не найден'
+        details:
+          type: object
+          example:
+            resource: 'Animal'
+            id: '123e4567-e89b-12d3-a456-426614174000'
+
+    ConflictError:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 409
+        message:
+          type: string
+          example: 'Конфликт данных'
+        details:
+          type: object
+          example:
+            reason: 'Пользователь с таким email уже существует'
+
+    ServerError:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 500
+        message:
+          type: string
+          example: 'Внутренняя ошибка сервера'
+        details:
+          type: object
+          example:
+            requestId: 'req-123456'
+
+tags:
+  - name: Аутентификация
+    description: Операции аутентификации и управления пользователями
+  - name: Животные
+    description: Операции с животными
+  - name: Профиль
+    description: Операции с профилем пользователя
+
+paths:
+  /auth/register/breeder:
+    post:
+      tags: [Аутентификация]
+      summary: Регистрация заводчика
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+                - firstName
+                - lastName
+                - phone
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  minLength: 6
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                phone:
+                  type: string
+      responses:
+        '201':
+          description: Заводчик успешно зарегистрирован
+        '400':
+          description: Ошибка валидации
+        '409':
+          description: Пользователь с таким email уже существует
+
+  /auth/register/user:
+    post:
+      tags: [Аутентификация]
+      summary: Регистрация пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+                - firstName
+                - lastName
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  minLength: 6
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+      responses:
+        '201':
+          description: Пользователь успешно зарегистрирован
+        '400':
+          description: Ошибка валидации
+        '409':
+          description: Пользователь с таким email уже существует
+
+  /auth/login:
+    post:
+      tags: [Аутентификация]
+      summary: Вход в систему
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Успешный вход
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                  refreshToken:
+                    type: string
+        '401':
+          description: Неверные учетные данные
+
+  /animals:
+    get:
+      tags: [Животные]
+      summary: Получить список животных заводчика
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Список животных
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Animal'
+        '401':
+          description: Не авторизован
+
+    post:
+      tags: [Животные]
+      summary: Добавить новое животное
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - name
+                - type
+                - breed
+                - age
+                - price
+              properties:
+                name:
+                  type: string
+                type:
+                  type: string
+                breed:
+                  type: string
+                age:
+                  type: number
+                price:
+                  type: number
+                description:
+                  type: string
+                image:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: Животное успешно добавлено
+        '400':
+          description: Ошибка валидации
+        '401':
+          description: Не авторизован
+
+  /animals/{animalId}:
+    parameters:
+      - name: animalId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: ID животного
+
+    get:
+      tags: [Животные]
+      summary: Получить информацию о животном
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Информация о животном
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Animal'
+        '404':
+          description: Животное не найдено
+
+    put:
+      tags: [Животные]
+      summary: Обновить информацию о животном
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Animal'
+      responses:
+        '200':
+          description: Информация обновлена
+        '400':
+          description: Ошибка валидации
+        '404':
+          description: Животное не найдено
+
+    delete:
+      tags: [Животные]
+      summary: Удалить животное
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Животное удалено
+        '404':
+          description: Животное не найдено
