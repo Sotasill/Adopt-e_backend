@@ -23,3 +23,16 @@ export const loginSchema = Joi.object({
   username: Joi.string().min(3).max(30).required(),
   password: Joi.string().required(),
 });
+
+export const resetPasswordEmailSchema = Joi.object({
+  email: Joi.string().email().required(),
+});
+
+export const resetPasswordSchema = Joi.object({
+  token: Joi.string().required(),
+  password: Joi.string().pattern(passwordRegexp).required(),
+});
+
+export const verifyEmailSchema = Joi.object({
+  token: Joi.string().required(),
+});

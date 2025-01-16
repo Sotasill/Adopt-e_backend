@@ -3,6 +3,7 @@ import { authRouter } from './auth.js';
 import { protectedRouter } from './protected.js';
 import { onlineStatusRouter } from './online-status.js';
 import { animalsRouter } from './animals.js';
+import uploadRouter from './upload.js';
 
 const router = express.Router();
 
@@ -14,5 +15,6 @@ router.use('/auth', authRouter);
 router.use('/protected', protectedRouter);
 router.use('/users', onlineStatusRouter);
 router.use('/animals', animalsRouter);
+router.use('/upload', uploadRouter);
 
 export { router as mainRouter };

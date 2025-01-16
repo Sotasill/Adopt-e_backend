@@ -74,6 +74,14 @@ const usersSchema = new Schema(
       type: String,
       default: null,
     },
+    verified: {
+      type: Boolean,
+      default: false,
+    },
+    verificationToken: {
+      type: String,
+      default: null,
+    },
     createdAt: {
       type: Date,
       default: Date.now,
@@ -81,6 +89,26 @@ const usersSchema = new Schema(
     updatedAt: {
       type: Date,
       default: Date.now,
+    },
+    avatar: {
+      public_id: {
+        type: String,
+        default: null,
+      },
+      url: {
+        type: String,
+        default: null,
+      },
+    },
+    background: {
+      public_id: {
+        type: String,
+        default: null,
+      },
+      url: {
+        type: String,
+        default: null,
+      },
     },
   },
   {

@@ -102,13 +102,14 @@ const animalSchema = new Schema(
       default: Date.now,
     },
     image: {
+      public_id: {
+        type: String,
+        default: null,
+      },
       url: {
         type: String,
-        default: function () {
-          return DEFAULT_IMAGES[this.type] || DEFAULT_IMAGES.cat;
-        },
+        default: null,
       },
-      publicId: String, // для Cloudinary
     },
     paymentStatus: {
       type: String,

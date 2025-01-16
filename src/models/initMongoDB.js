@@ -9,10 +9,7 @@ const initMongoDB = async () => {
 
     const uri = `mongodb+srv://${user}:${password}@adopt-e.phne2.mongodb.net/${db}?retryWrites=true&w=majority`;
 
-    const connection = await mongoose.connect(uri, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    const connection = await mongoose.connect(uri);
 
     console.log(`MongoDB is connected: ${connection.connection.host}`);
 
