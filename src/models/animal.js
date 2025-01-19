@@ -133,6 +133,21 @@ const animalSchema = new Schema(
       required: false,
       default: '',
     },
+    gallery: [
+      {
+        url: String,
+        public_id: String,
+        type: {
+          type: String,
+          enum: ['main', 'gallery'],
+          default: 'gallery',
+        },
+        createdAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
   },
   { versionKey: false, timestamps: true }
 );

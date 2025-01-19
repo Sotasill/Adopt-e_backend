@@ -1,7 +1,7 @@
 import { User } from '../models/users.js';
 import Animal from '../models/animal.js';
 import { cloudinary } from '../utils/cloudinary.js';
-import HttpError from '../helpers/HttpError.js';
+import { HttpError } from '../utils/errorHandler.js';
 
 const updateUserAvatar = async (req, res) => {
   const { _id } = req.user;

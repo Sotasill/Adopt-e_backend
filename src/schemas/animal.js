@@ -1,6 +1,7 @@
 import Joi from 'joi';
 import { Types } from 'mongoose';
 import Animal from '../models/animal.js';
+import { ANIMAL_TYPES, GENDERS, ERROR_MESSAGES } from '../constants/common.js';
 
 const isValidObjectId = (value, helpers) => {
   if (!Types.ObjectId.isValid(value)) {
@@ -13,7 +14,7 @@ const isUniqueMicrochip = async (value, helpers) => {
   if (!value) return value;
   const existingAnimal = await Animal.findOne({ microchip: value });
   if (existingAnimal) {
-    throw new Error('Животное с таким номером микрочипа уже существует');
+    throw new Error(ERROR_MESSAGES.DUPLICATE_MICROCHIP);
   }
   return value;
 };
@@ -25,12 +26,12 @@ const animalAddSchema = Joi.object({
   fatherRegistered: Joi.boolean().default(false),
   name: Joi.string().required(),
   breed: Joi.string().required(),
-  sex: Joi.string().valid('male', 'female').required().messages({
+  sex: Joi.string().valid(GENDERS.MALE, GENDERS.FEMALE).required().messages({
     'any.required': 'Пол животного обязателен',
     'any.only': 'Пол животного должен быть male или female',
   }),
   birthDate: Joi.date().required(),
-  type: Joi.string().valid('cat', 'dog'),
+  type: Joi.string().valid(ANIMAL_TYPES.CAT, ANIMAL_TYPES.DOG),
   litterRegistrationNumber: Joi.string(),
   microchip: Joi.string().external(isUniqueMicrochip),
   furColor: Joi.string(),
@@ -42,7 +43,7 @@ const animalAddSchema = Joi.object({
 const animalUpdateSchema = Joi.object({
   name: Joi.string(),
   breed: Joi.string(),
-  sex: Joi.string().valid('male', 'female'),
+  sex: Joi.string().valid(GENDERS.MALE, GENDERS.FEMALE),
   birthDate: Joi.date(),
   mother: Joi.string().custom(isValidObjectId),
   father: Joi.string().custom(isValidObjectId),

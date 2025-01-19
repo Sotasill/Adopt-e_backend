@@ -10,7 +10,7 @@ import {
   updateUserBackground,
   updateAnimalImage,
 } from '../controllers/upload.js';
-import ctrlWrapper from '../helpers/ctrlWrapper.js';
+import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 
 const router = express.Router();
 
