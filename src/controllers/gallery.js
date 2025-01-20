@@ -193,18 +193,25 @@ const deleteFromGallery = async (req, res) => {
     throw new HttpError(403, 'Нет прав для редактирования этого животного');
   }
 
-  const imageToDelete = animal.gallery.find(img => img.public_id === imageId);
+  // Ищем изображение по последней части public_id
+  const imageToDelete = animal.gallery.find(img => {
+    const imgId = img.public_id.split('/').pop();
+    return imgId === imageId;
+  });
+
   if (!imageToDelete) {
     throw new HttpError(404, 'Изображение не найдено');
   }
 
   try {
-    // Удаляем из Cloudinary
-    const result = await cloudinary.uploader.destroy(imageId);
+    // Удаляем из Cloudinary используя полный public_id
+    const result = await cloudinary.uploader.destroy(imageToDelete.public_id);
     console.log('Cloudinary delete result:', result);
 
     // Удаляем из базы данных
-    animal.gallery = animal.gallery.filter(img => img.public_id !== imageId);
+    animal.gallery = animal.gallery.filter(
+      img => img.public_id !== imageToDelete.public_id
+    );
     await animal.save();
 
     res.json({
@@ -221,4 +228,52 @@ const deleteFromGallery = async (req, res) => {
   }
 };
 
-export { addToGallery, getGallery, deleteFromGallery };
+const reorderGallery = async (req, res) => {
+  const { animalId } = req.params;
+  const { imageIds } = req.body;
+
+  if (!Array.isArray(imageIds)) {
+    throw new HttpError(400, 'imageIds должен быть массивом');
+  }
+
+  const animal = await Animal.findById(animalId);
+  if (!animal) {
+    throw new HttpError(404, 'Животное не найдено');
+  }
+
+  if (!req.user) {
+    throw new HttpError(401, 'Необходима авторизация');
+  }
+
+  if (animal.userId.toString() !== req.user._id.toString()) {
+    throw new HttpError(403, 'Нет прав для редактирования этого животного');
+  }
+
+  // Проверяем, что все imageIds существуют в галерее
+  const validImageIds = imageIds.every(id =>
+    animal.gallery.some(img => img.public_id.split('/').pop() === id)
+  );
+
+  if (!validImageIds) {
+    throw new HttpError(400, 'Некоторые imageIds не найдены в галерее');
+  }
+
+  // Создаем новый порядок галереи
+  const reorderedGallery = imageIds.map(id => {
+    return animal.gallery.find(img => img.public_id.split('/').pop() === id);
+  });
+
+  // Обновляем галерею
+  animal.gallery = reorderedGallery;
+  await animal.save();
+
+  res.json({
+    status: 'success',
+    code: 200,
+    data: {
+      gallery: animal.gallery,
+    },
+  });
+};
+
+export { addToGallery, getGallery, deleteFromGallery, reorderGallery };
