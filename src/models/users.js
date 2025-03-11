@@ -1,70 +1,138 @@
-import { model, Schema } from 'mongoose';
-import { emailRegexp, nameRegexp } from '../constants/users.js';
-import { uniqueUserIdMiddleware } from '../middleware/uniqueUserId.js';
+import mongoose from 'mongoose';
+import { nameRegexp, emailRegexp } from '../constants/users.js';
+import { generateUserId, generateSpecialistId } from '../utils/generateId.js';
+import {
+  ROLES,
+  ANIMAL_TYPES,
+  SPECIALIST_TYPES,
+  VALIDATION_PATTERNS,
+} from '../constants/common.js';
 
-// Функция для генерации уникального ID пользователя
-const generateUserId = () => {
-  return Math.floor(10000000 + Math.random() * 90000000).toString();
-};
+const { Schema } = mongoose;
 
 const usersSchema = new Schema(
   {
     userId: {
       type: String,
       unique: true,
-      default: generateUserId,
+      default: function () {
+        return this.role === ROLES.SPECIALIST
+          ? generateSpecialistId()
+          : generateUserId();
+      },
     },
     username: {
       type: String,
       required: true,
       unique: true,
-      match: nameRegexp,
+      match: [
+        VALIDATION_PATTERNS.USERNAME,
+        'Username must start with capital letter and contain only letters, numbers, underscore and dash',
+      ],
+      validate: {
+        validator: function (v) {
+          return VALIDATION_PATTERNS.NO_PROFANITY.test(v);
+        },
+        message: 'Username contains inappropriate language',
+      },
     },
     email: {
       type: String,
       required: true,
       unique: true,
-      match: emailRegexp,
+      match: [VALIDATION_PATTERNS.EMAIL, 'Please enter a valid email address'],
     },
     password: {
       type: String,
+      required: function () {
+        // Пароль обязателен только если нет социальной аутентификации
+        return !this.googleId && !this.facebookId && !this.appleId;
+      },
+    },
+    acceptTerms: {
+      type: Boolean,
       required: true,
+      default: false,
     },
     role: {
       type: String,
-      enum: ['user', 'breeder'],
+      enum: Object.values(ROLES),
       required: true,
-      default: 'user',
+      default: ROLES.USER,
+    },
+    // Поля для социальной аутентификации
+    googleId: {
+      type: String,
+      sparse: true,
+      unique: true,
+    },
+    facebookId: {
+      type: String,
+      sparse: true,
+      unique: true,
+    },
+    appleId: {
+      type: String,
+      sparse: true,
+      unique: true,
+    },
+    socialProvider: {
+      type: String,
+      enum: ['google', 'facebook', 'apple', null],
+      default: null,
     },
     // Поля для заводчика
     companyName: {
       type: String,
       required: function () {
-        return this.role === 'breeder';
+        return this.role === ROLES.BREEDER;
       },
-    },
-    address: {
-      type: String,
-      required: function () {
-        return this.role === 'breeder';
-      },
-    },
-    specialization: {
-      type: String,
-      enum: ['cat', 'dog'],
-      required: function () {
-        return this.role === 'breeder';
+      match: [
+        VALIDATION_PATTERNS.COMPANY_NAME,
+        'Company name must start with capital letter',
+      ],
+      validate: {
+        validator: function (v) {
+          return VALIDATION_PATTERNS.NO_PROFANITY.test(v);
+        },
+        message: 'Company name contains inappropriate language',
       },
     },
     country: {
       type: String,
       required: function () {
-        return this.role === 'breeder';
+        return this.role === ROLES.BREEDER || this.role === ROLES.SPECIALIST;
+      },
+      match: [
+        VALIDATION_PATTERNS.COUNTRY,
+        'Country must start with capital letter',
+      ],
+    },
+    city: {
+      type: String,
+      match: [VALIDATION_PATTERNS.CITY, 'City must start with capital letter'],
+    },
+    specialization: {
+      type: String,
+      required: function () {
+        return this.role === ROLES.BREEDER || this.role === ROLES.SPECIALIST;
+      },
+      validate: {
+        validator: function (v) {
+          if (this.role === ROLES.BREEDER) {
+            return Object.values(ANIMAL_TYPES).includes(v);
+          } else if (this.role === ROLES.SPECIALIST) {
+            return Object.values(SPECIALIST_TYPES).includes(v);
+          }
+          return true;
+        },
+        message: 'Invalid specialization for user role',
       },
     },
+    // Общие поля
     isOnline: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     lastActive: {
       type: Date,
@@ -111,13 +179,14 @@ const usersSchema = new Schema(
       },
     },
   },
-  {
-    timestamps: true,
-    versionKey: false,
-  }
+  { versionKey: false, timestamps: true }
 );
 
-usersSchema.pre('save', uniqueUserIdMiddleware);
+// Уникальный индекс для предотвращения дублирования email между разными ролями
+usersSchema.index({ email: 1, role: 1 }, { unique: true });
+// Уникальный индекс для предотвращения дублирования названия компании между разными ролями
+usersSchema.index({ companyName: 1, role: 1 }, { unique: true, sparse: true });
 
-export const UsersCollection = model('User', usersSchema);
-export const User = UsersCollection;
+const User = mongoose.model('User', usersSchema);
+
+export { User };

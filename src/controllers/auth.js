@@ -9,15 +9,21 @@ import {
   verifyEmail,
 } from '../services/auth.js';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
-
-const registerBreeder = async (req, res) => {
-  const userData = await registerUser({ ...req.body, role: 'breeder' });
-  res.status(201).json({ user: userData });
-};
+import { ROLES } from '../constants/common.js';
 
 const registerRegularUser = async (req, res) => {
-  const userData = await registerUser({ ...req.body, role: 'user' });
-  res.status(201).json({ user: userData });
+  const result = await registerUser({ ...req.body, role: ROLES.USER });
+  res.status(201).json(result);
+};
+
+const registerBreeder = async (req, res) => {
+  const result = await registerUser({ ...req.body, role: ROLES.BREEDER });
+  res.status(201).json(result);
+};
+
+const registerSpecialist = async (req, res) => {
+  const result = await registerUser({ ...req.body, role: ROLES.SPECIALIST });
+  res.status(201).json(result);
 };
 
 const login = async (req, res) => {
@@ -26,9 +32,8 @@ const login = async (req, res) => {
 };
 
 const refresh = async (req, res) => {
-  const { refreshToken } = req.body;
-  const tokens = await refreshSession(refreshToken);
-  res.json(tokens);
+  const result = await refreshSession(req.body.refreshToken);
+  res.json(result);
 };
 
 const logout = async (req, res) => {
@@ -57,8 +62,9 @@ const verifyEmailHandler = async (req, res) => {
 };
 
 export const auth = {
-  registerBreeder: ctrlWrapper(registerBreeder),
   registerRegularUser: ctrlWrapper(registerRegularUser),
+  registerBreeder: ctrlWrapper(registerBreeder),
+  registerSpecialist: ctrlWrapper(registerSpecialist),
   login: ctrlWrapper(login),
   refresh: ctrlWrapper(refresh),
   logout: ctrlWrapper(logout),

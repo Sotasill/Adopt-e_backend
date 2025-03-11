@@ -4,6 +4,7 @@ import { validateBody } from '../middleware/index.js';
 import {
   registerBreederSchema,
   registerUserSchema,
+  registerSpecialistSchema,
   loginSchema,
   resetPasswordEmailSchema,
   resetPasswordSchema,
@@ -98,6 +99,51 @@ router.post(
   '/register/user',
   validateBody(registerUserSchema),
   authController.registerRegularUser
+);
+
+/**
+ * @swagger
+ * /auth/register/specialist:
+ *   post:
+ *     tags: [Аутентификация]
+ *     summary: Регистрация специалиста
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *               - firstName
+ *               - lastName
+ *               - phone
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               password:
+ *                 type: string
+ *                 minLength: 6
+ *               firstName:
+ *                 type: string
+ *               lastName:
+ *                 type: string
+ *               phone:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Специалист успешно зарегистрирован
+ *       400:
+ *         description: Ошибка валидации
+ *       409:
+ *         description: Пользователь с таким email уже существует
+ */
+router.post(
+  '/register/specialist',
+  validateBody(registerSpecialistSchema),
+  authController.registerSpecialist
 );
 
 /**
@@ -273,7 +319,7 @@ router.post(
 
 /**
  * @swagger
- * /auth/send-verification-email:
+ * /auth/verify-email/resend:
  *   post:
  *     tags: [Аутентификация]
  *     summary: Отправка email для подтверждения адреса
@@ -286,9 +332,9 @@ router.post(
  *         description: Не авторизован
  */
 router.post(
-  '/send-verification-email',
+  '/verify-email/resend',
   authenticate,
   authController.sendVerificationEmail
 );
 
-export { router as authRouter };
+export default router;

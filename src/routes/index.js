@@ -1,5 +1,5 @@
 import express from 'express';
-import { authRouter } from './auth.js';
+import authRouter from './auth.js';
 import { protectedRouter } from './protected.js';
 import { onlineStatusRouter } from './online-status.js';
 import { animalsRouter } from './animals.js';
@@ -19,4 +19,4 @@ router.use('/animals', animalsRouter);
 router.use('/upload', uploadRouter);
 router.use('/animals/gallery', galleryRouter);
 
-export { router as mainRouter };
+export default router;

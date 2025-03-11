@@ -2,6 +2,7 @@
 export const ROLES = {
   USER: 'user',
   BREEDER: 'breeder',
+  SPECIALIST: 'specialist',
 };
 
 // Типы животных
@@ -26,8 +27,13 @@ export const PAYMENT_STATUS = {
 // Регулярные выражения для валидации
 export const VALIDATION_PATTERNS = {
   EMAIL: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-  USERNAME: /^[a-zA-Z0-9_-]{3,30}$/,
+  USERNAME: /^[A-Z][a-zA-Z0-9_-]{2,29}$/,
   PASSWORD: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/,
+  COMPANY_NAME: /^[A-Z][a-zA-Z0-9\s-]{2,49}$/,
+  CITY: /^[A-Z][a-zA-Z\s-]{1,49}$/,
+  COUNTRY: /^[A-Z][a-zA-Z\s-]{1,49}$/,
+  NO_PROFANITY:
+    /^(?!.*(fuck|shit|ass|bitch|cunt|dick|pussy|cock|whore|slut)).*$/i,
 };
 
 // Значения по умолчанию
@@ -57,4 +63,10 @@ export const ERROR_MESSAGES = {
   DUPLICATE_EMAIL: 'Email уже используется',
   DUPLICATE_USERNAME: 'Имя пользователя уже занято',
   DUPLICATE_MICROCHIP: 'Животное с таким номером микрочипа уже существует',
+};
+
+export const SPECIALIST_TYPES = {
+  VETERINARY: 'veterinary',
+  PETSHOP: 'petshop',
+  SERVICE: 'service',
 };

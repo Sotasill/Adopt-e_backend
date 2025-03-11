@@ -19,13 +19,20 @@ const registerUser = async ({
   username,
   email,
   password,
-  phone,
+  acceptTerms,
   role,
   specialization,
   companyName,
-  address,
   country,
+  city,
 }) => {
+  if (!acceptTerms) {
+    throw createHttpError(
+      400,
+      'You must accept the terms and conditions to register'
+    );
+  }
+
   const existingUser = await User.findOne({
     $or: [{ email }, { username }],
   });
@@ -44,12 +51,12 @@ const registerUser = async ({
     username,
     email,
     password: hashedPassword,
-    phone,
+    acceptTerms,
     role,
     specialization,
     companyName,
-    address,
     country,
+    city,
   });
 
   await sendVerificationEmail(newUser._id);
@@ -57,7 +64,7 @@ const registerUser = async ({
   const userData = newUser.toObject();
   delete userData.password;
 
-  return userData;
+  return { user: userData };
 };
 
 const loginUser = async ({ username, password }) => {
